@@ -39,7 +39,7 @@ export async function POST(request: Request) {
               { name: "No. HP", value: no_hp || "-", inline: true },
               { name: "Mobil", value: mobil_nama || "-", inline: true },
               { name: "Tanggal Pinjam", value: tanggalFormatted, inline: true },
-              { nama: "Lokasi", value: lokasi || "-", inline: true },
+              { name: "Lokasi", value: lokasi || "-", inline: true },
             ],
             timestamp: new Date().toISOString(),
           },
@@ -61,5 +61,5 @@ export async function POST(request: Request) {
       { sent: false, error: err instanceof Error ? err.message : "Unknown error" },
       { status: 500 }
     );
-  };
-};
+  }
+}
