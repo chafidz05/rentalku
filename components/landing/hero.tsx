@@ -3,7 +3,7 @@ import { MapPin, ShieldCheck } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-road-50">
+    <section id="hero" className="relative overflow-hidden bg-road-50">
       <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-4 py-14 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:justify-between lg:py-28">
         <div className="max-w-xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-road-200 bg-white px-3 py-1 text-xs font-semibold text-road-600">

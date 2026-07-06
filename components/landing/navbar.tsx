@@ -11,7 +11,7 @@ export function Navbar() {
         </Link>
         <nav className="hidden items-center gap-7 sm:flex">
           <a href="#armada" className="text-sm font-medium text-road-900/70 hover:text-road-600">Armada</a>
-          <a href="#cara-sewa" className="text-sm font-medium text-road-900/70 hover:text-road-600">Cara Sewa</a>
+          <a href="#hero" className="text-sm font-medium text-road-900/70 hover:text-road-600">Cara Sewa</a>
           <a href="#pembayaran" className="text-sm font-medium text-road-900/70 hover:text-road-600">Pembayaran</a>
           <a href="#kontak" className="text-sm font-medium text-road-900/70 hover:text-road-600">Kontak</a>
         </nav>

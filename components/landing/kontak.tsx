@@ -6,7 +6,7 @@ export async function Kontak() {
   const supabase = await createClient();
   const { data: mobil } = await supabase
     .from("mobil")
-    .select("id")
+    .select("id, nama")
     .eq("tersedia", true)
     .order("created_at", { ascending: true })
     .limit(1)
@@ -30,7 +30,7 @@ export async function Kontak() {
           </a>
         </div>
         <div className="rounded-2xl bg-white p-6 shadow-xl sm:p-8">
-          <FormSewa mobilId={mobil?.id ?? null} />
+          <FormSewa mobilId={mobil?.id ?? null} mobilNama={mobil?.nama ?? null} />
         </div>
       </div>
     </section>

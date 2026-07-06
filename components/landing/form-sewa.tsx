@@ -7,7 +7,13 @@ import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { Loader2, CheckCircle2 } from "lucide-react";
 
-export function FormSewa({ mobilId }: { mobilId?: string | null }) {
+export function FormSewa({
+  mobilId,
+  mobilNama,
+}: {
+  mobilId?: string | null,
+  mobilNama?: string | null
+}) {
   const [loading, setLoading] = useState(false);
   const [sukses, setSukses] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +59,18 @@ export function FormSewa({ mobilId }: { mobilId?: string | null }) {
       });
 
       if (insertError) throw insertError;
+
+      fetch("/api/notifikasi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama,
+          no_hp,
+          tanggal_pinjam,
+          lokasi,
+          mobil_nama: mobilNama ?? null,
+        }),
+      }).catch((err) => console.error("Notifikasi gagal terkirim:", err));
 
       setSukses(true);
       e.currentTarget.reset();
