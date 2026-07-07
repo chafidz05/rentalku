@@ -39,6 +39,12 @@ create policy "Admin dapat mengubah mobil"
   to authenticated
   using (true);
 
+drop policy if exists "Admin dapat menghapus mobil" on mobil;
+create policy "Admin dapat menghapus mobil"
+  on mobil for delete
+  to authenticated
+  using (true);
+
 -- Data awal: 1 unit Toyota Calya (hanya masuk jika tabel mobil masih kosong)
 insert into mobil (nama, tipe, kapasitas, transmisi, bahan_bakar, harga_harian, tersedia)
 select 'Toyota Calya', 'MPV 7-Seater', 7, 'Manual/Matic', 'Bensin', 350000, true
@@ -85,6 +91,12 @@ create policy "Admin dapat mengubah status pengajuan"
   to authenticated
   using (true);
 
+drop policy if exists "Admin dapat menghapus pengajuan" on peminjam;
+create policy "Admin dapat menghapus pengajuan"
+  on peminjam for delete
+  to authenticated
+  using (true);
+
 
 -- 3. STORAGE BUCKET UNTUK FOTO KTP
 insert into storage.buckets (id, name, public)
@@ -108,7 +120,46 @@ create policy "Semua orang dapat melihat foto KTP"
 -- signed URL saat menampilkan foto di halaman admin.
 
 
--- 4. CATATAN AKUN ADMIN
+-- 4. TABEL PENGATURAN (no HP pemilik & rekening pembayaran, diedit dari admin)
+-- Tabel ini hanya berisi SATU baris (singleton) yang dipakai landing page.
+create table if not exists pengaturan (
+  id int primary key default 1,
+  no_hp_pemilik text not null default '6281234567890',
+  bca_nomor text not null default '1234567890',
+  bca_atas_nama text not null default 'Nama Pemilik Rental',
+  mandiri_nomor text not null default '9876543210',
+  mandiri_atas_nama text not null default 'Nama Pemilik Rental',
+  updated_at timestamptz not null default now(),
+  constraint pengaturan_singleton check (id = 1)
+);
+
+alter table pengaturan enable row level security;
+
+drop policy if exists "Publik dapat melihat pengaturan" on pengaturan;
+create policy "Publik dapat melihat pengaturan"
+  on pengaturan for select
+  to anon, authenticated
+  using (true);
+
+drop policy if exists "Admin dapat mengubah pengaturan" on pengaturan;
+create policy "Admin dapat mengubah pengaturan"
+  on pengaturan for update
+  to authenticated
+  using (true);
+
+drop policy if exists "Admin dapat membuat pengaturan" on pengaturan;
+create policy "Admin dapat membuat pengaturan"
+  on pengaturan for insert
+  to authenticated
+  with check (true);
+
+-- Pastikan baris singleton-nya selalu ada
+insert into pengaturan (id)
+values (1)
+on conflict (id) do nothing;
+
+
+-- 5. CATATAN AKUN ADMIN
 -- Project ini memakai Supabase Auth (auth.users) langsung sebagai akun
 -- admin, bukan tabel kustom. Buat akun lewat:
 -- Authentication > Users > Add user (di Supabase Dashboard).

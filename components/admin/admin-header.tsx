@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LogoutButton } from "@/components/admin/logout-button";
 
-export function AdminHeader({ active }: { active: "peminjam" | "mobil" }) {
+export function AdminHeader({ active }: { active: "peminjam" | "mobil" | "pengaturan" }) {
   return (
     <header className="border-b border-road-100 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -38,6 +38,16 @@ export function AdminHeader({ active }: { active: "peminjam" | "mobil" }) {
           }`}
         >
           Mobil
+        </Link>
+        <Link
+          href="/admin/pengaturan"
+          className={`border-b-2 px-3 py-2.5 text-sm font-semibold ${
+            active === "pengaturan"
+              ? "border-road-600 text-road-600"
+              : "border-transparent text-road-900/60 hover:text-road-900"
+          }`}
+        >
+          Pengaturan
         </Link>
       </nav>
     </header>

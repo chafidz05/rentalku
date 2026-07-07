@@ -4,22 +4,36 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { createClient } from "@/lib/supabase/client";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { Loader2, CheckCircle2, Phone } from "lucide-react";
+
+const DEFAULT_NO_WA_ADMIN = "6281234567890";
 
 export function FormSewa({
   mobilId,
   mobilNama,
+  noWhatsappAdmin,
 }: {
   mobilId?: string | null,
-  mobilNama?: string | null
+  mobilNama?: string | null,
+  noWhatsappAdmin?: string | null,
 }) {
   const [loading, setLoading] = useState(false);
   const [sukses, setSukses] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const noWaAdmin = noWhatsappAdmin || DEFAULT_NO_WA_ADMIN;
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    const form = e.currentTarget;
+
     setLoading(true);
     setError(null);
 
@@ -73,7 +87,7 @@ export function FormSewa({
       }).catch((err) => console.error("Notifikasi gagal terkirim:", err));
 
       setSukses(true);
-      e.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setError(
         err instanceof Error
@@ -85,67 +99,97 @@ export function FormSewa({
     };
   };
 
-  if (sukses) {
-    return (
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-road-100 bg-road-50 p-8 text-center">
-        <CheckCircle2 className="h-10 w-10 text-road-600" />
-        <p className="font-display text-lg font-bold text-road-900">
-          Pengajuan terkirim!
-        </p>
-        <p className="text-sm text-road-900/70">
-          Tim kami akan menghubungi kamu lewat WhatsApp untuk konfirmasi.
-        </p>
-        <Button variant="outline" onClick={() => setSukses(false)}>
-          Ajukan Lagi
-        </Button>
-      </div>
-    );
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-1.5">
-        <Label htmlFor="nama">Nama Lengkap</Label>
-        <Input id="nama" name="nama" placeholder="Sesuai KTP" required />
-      </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="no_hp">Nomor HP / WhatsApp</Label>
-        <Input
-          id="no_hp"
-          name="no_hp"
-          type="tel"
-          inputMode="numeric"
-          placeholder="08xxxxxxxxxxx"
-          pattern="[0-9+ ]{9,15}"
-          title="Masukkan nomor HP yang valid"
-          required
-        />
-      </div>
-      <div className="space-y-1.5">
-        <Label htmlFor="foto_ktp">Foto KTP</Label>
-        <Input id="foto_ktp" name="foto_ktp" type="file" accept="image/*" required />
-      </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label htmlFor="tanggal_pinjam">Tanggal Pinjam</Label>
-          <Input id="tanggal_pinjam" name="tanggal_pinjam" type="date" required />
+          <Label htmlFor="nama">Nama Lengkap</Label>
+          <Input id="nama" name="nama" placeholder="Sesuai KTP" required />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="lokasi">Lokasi Jemput</Label>
-          <Input id="lokasi" name="lokasi" placeholder="Contoh: Bandung Kota" required />
+          <Label htmlFor="no_hp">Nomor HP / WhatsApp</Label>
+          <Input
+            id="no_hp"
+            name="no_hp"
+            type="tel"
+            inputMode="numeric"
+            placeholder="08xxxxxxxxxxx"
+            pattern="[0-9+ ]{9,15}"
+            title="Masukkan nomor HP yang valid"
+            required
+          />
         </div>
-      </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="foto_ktp">Foto KTP</Label>
+          <Input id="foto_ktp" name="foto_ktp" type="file" accept="image/*" required />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="tanggal_pinjam">Tanggal Pinjam</Label>
+            <Input id="tanggal_pinjam" name="tanggal_pinjam" type="date" required />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="lokasi">Lokasi Tujuan</Label>
+            <Input id="lokasi" name="lokasi" placeholder="Contoh: Bandung" required />
+          </div>
+        </div>
 
-      {error && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
-          {error}
-        </p>
-      )}
+        {error && (
+          <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600">
+            {error}
+          </p>
+        )}
 
-      <Button type="submit" size="lg" className="w-full" disabled={loading}>
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {loading ? "Mengirim..." : "Kirim Pengajuan"}
-      </Button>
-    </form>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {loading ? "Mengirim..." : "Kirim Pengajuan"}
+        </Button>
+      </form>
+
+      <Dialog open={sukses} onOpenChange={setSukses}>
+        <DialogContent className="text-center">
+          <div className="flex flex-col items-center gap-3 pt-2">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+            </span>
+            <DialogTitle className="text-xl">
+              Pengajuan Berhasil Terkirim!
+            </DialogTitle>
+            <p className="text-sm text-road-900/70">
+              Terima kasih, pengajuan sewa kamu sudah kami terima. Admin
+              akan menghubungi dan mengonfirmasi pesanan kamu melalui
+              WhatsApp berikut:
+            </p>
+            <div className="w-full rounded-xl border border-road-100 bg-road-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-road-900/50">
+                No. Whatsapp Admin
+              </p>
+              <p className="mt-1 font-display text-lg font-extrabold text-road-900">
+                +{noWaAdmin}
+              </p>
+            </div>
+            <div className="mt-1 flex w-full flex-col gap-2 sm:flex-row">
+              <Button asChild className="w-full">
+                <a
+                  href={`https://wa.me/${noWaAdmin}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Phone className="h-4 w-4" />
+                  Chat Admin Sekarang
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setSukses(false)}
+              >
+                Tutup
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

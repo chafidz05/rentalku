@@ -12,6 +12,14 @@ export async function Kontak() {
     .limit(1)
     .maybeSingle();
 
+  const { data: pengaturan } = await supabase
+    .from("pengaturan")
+    .select("no_hp_pemilik")
+    .eq("id", 1)
+    .maybeSingle();
+
+  const noWhatsapp = pengaturan?.no_hp_pemilik ?? "6281234567890";
+
   return (
     <section id="kontak" className="bg-road-900 py-14 sm:py-20">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
@@ -22,7 +30,7 @@ export async function Kontak() {
             untuk tanya-tanya lebih dulu.
           </p>
           <a
-            href="https://wa.me/1234567890"
+            href={`https://wa.me/${noWhatsapp}`}
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 font-semibold text-road-900 transition-colors hover:bg-road-50"
           >
             <Phone className="h-4 w-4" />
@@ -30,7 +38,11 @@ export async function Kontak() {
           </a>
         </div>
         <div className="rounded-2xl bg-white p-6 shadow-xl sm:p-8">
-          <FormSewa mobilId={mobil?.id ?? null} mobilNama={mobil?.nama ?? null} />
+          <FormSewa
+            mobilId={mobil?.id ?? null}
+            mobilNama={mobil?.nama ?? null}
+            noWhatsappAdmin={noWhatsapp}
+          />
         </div>
       </div>
     </section>
